@@ -1,0 +1,154 @@
+body {
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-family:"Fredoka One",sans-serif;
+    background:black;
+    height:100vh;
+  }
+
+.show {
+    position:relative;
+    text-align:center;
+    width:fit-content;
+    height:150px;
+    line-height:150px;
+    font-size:60px;
+    font-weight:600;
+   }
+
+.show span {
+    color:black;
+    letter-spacing:10px;
+    mix-blend-mode:darken;
+  }
+
+  .show:before {
+    content:"";
+    position:absolute;
+    top:50%;
+    left:0px;
+    width:150px;
+    height:150px;
+    background:white;
+    transform:translateY(-50%);
+    border-radius:50%;
+    box-shadow:inset 0px 0px 15px 15px lightblue;
+    animation:showLetter 2.5s ease-in-out infinite;
+  }
+  
+  @keyframes showLetter {
+    0%,100% {
+      left:0px;
+    }
+    50%{
+      left:calc(100% - 150px);
+    }
+  }
+
+  .hamb {
+    position:fixed;
+    top:20px;
+    left:20px;
+    width:50px;
+    height:50px;
+    background:black;
+    border-radius:50%;
+    cursor:pointer;
+    z-index:2;
+  }
+  .hamb span {
+    position:absolute;
+    top:50%;
+    left:50%;
+    transform:translate(-50%,-50%);
+    width:60%;
+    height:2px;
+    background:white;
+    border-radius:2px;
+    transition:all 250ms ease-in-out;
+  }
+  .hamb span:nth-child(1){
+    top:30%;
+  }
+  .hamb span:nth-child(3){
+    top:70%;
+  }
+  body.activeNav .hamb span:nth-child(1){
+    top:50%;
+    transform:translate(-50%,-50%) rotate(45deg);
+  }
+  body.activeNav .hamb span:nth-child(2){
+    display:none;
+  }
+  body.activeNav .hamb span:nth-child(3){
+    top:50%;
+    transform:translate(-50%,-50%) rotate(-45deg);
+  }
+  .menuBar {
+    position:fixed;
+    top:0px;
+    left:0px;
+    width:100%;
+    height:0vh;
+    background:darkmagenta;
+    overflow:hidden;
+    transition:all 500ms ease-in-out;
+  }
+  body.activeNav .menuBar {
+    opacity:1;
+    z-index: 1;
+    height:100vh;
+  }
+  .menuBar .menu .opt a:after {
+    content:"";
+    display:block;
+    transition:all 250ms ease-in-out;
+    width:0%;
+    height:4px;
+    background:lightblue;
+    border-radius:5px;
+  }
+  .menuBar .menu .opt a:hover:after {
+    width:100%;
+  }
+  
+  body.activeNav .menuBar .menu .opt a {
+    top:0px;
+    opacity:1;
+  }
+  body.activeNav .menuBar .menu > div:nth-child(1) > a {
+    transition: all 250ms ease-in-out 500ms;
+  }
+  body.activeNav .menuBar .menu > div:nth-child(2) > a {
+    transition: all 250ms ease-in-out 550ms;
+  }
+  body.activeNav .menuBar .menu > div:nth-child(3) > a {
+    transition: all 250ms ease-in-out 600ms;
+  }
+  body.activeNav .menuBar .menu > div:nth-child(4) > a {
+    transition: all 250ms ease-in-out 650ms;
+  }
+  body.activeNav .menuBar .menu > div:nth-child(5) > a {
+    transition: all 250ms ease-in-out 700ms;
+  }
+  .menuBar .menu {
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    height:100%;
+  }
+  .menuBar .menu .opt {
+    position:relative;
+    margin:2px 25px;
+  }
+  .menuBar .menu .opt a {
+    position:relative;
+    top:40px;
+    opacity:0;
+    text-decoration:none;
+    color:#ddd;
+    font-size:20px;
+    font-weight:600;
+  }
+  

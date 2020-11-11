@@ -1,0 +1,316 @@
+<style>
+    body {
+        background-image: url("a.jpg");
+        /* background-size: cover; */
+        color: white;
+    }
+    .con {
+        display: flex;
+        flex-direction: column;
+    }
+    .con .row{
+        display: flex;
+    }
+    .con .row input {
+        width: 100px;
+        height: 100px;
+        font-size: 40px;
+        text-align: center;
+        outline: none;
+    }
+    .container {
+        display: flex;
+        justify-content: space-around;
+    }
+    .btn {
+        display: inline-block;
+        font-weight: 400;
+        text-align: center;
+        white-space: nowrap;
+        padding: 10px 20px;
+        background-color: #007bff;
+        border-color: #007bff;
+        color: white;
+        border-radius: 20px;
+        outline: none;
+        margin: 10px;
+    }
+    select {
+        outline: none;
+        padding: 5px;
+        background-color: yellow;
+        font-size: 20px;
+    }
+    .pics {
+        display: flex;
+        justify-content: space-around;
+    }
+    .sec img {
+        width: 300px;
+        height: 200px;
+        margin-top: 2vh;
+    }
+    h1 {
+        text-align: center;
+    }
+    .abs img {
+        border-radius: 50%;
+        height: 5vw;
+        width: 5vw;
+        margin: 10px;
+    }
+    .abs {
+        position: fixed;
+        right: 0;
+        bottom: 0;
+    }
+    .con .row:first-child input:nth-child(1) {
+        border-top-left-radius: 15px;
+    }
+    .con .row:first-child input:nth-of-type(2) {
+        border-top-right-radius: 15px;
+    }
+    .con .row:last-child input:nth-child(1) {
+        border-bottom-left-radius: 15px;
+    }
+    .con .row:last-child input:nth-child(2) {
+        border-bottom-right-radius: 15px;
+    }
+</style>
+<body>
+    <div class="container">
+   <div class='con' id='Z'>
+       <div class='row'>
+            <input type="text" placeholder="Z11">
+            <input type="text" placeholder="Z12">
+        </div>
+        <div class='row'>
+            <input type="text" placeholder="Z21">
+            <input type="text" placeholder="Z22">
+        </div>
+    </div> 
+    <div class='con' id='h'>
+        <div class='row'>
+             <input type="text" placeholder="h11">
+             <input type="text" placeholder="h12">
+         </div>
+         <div class='row'>
+             <input type="text" placeholder="h21">
+             <input type="text" placeholder="h22">
+         </div>
+     </div> 
+     <div class='con' id='Y'>
+        <div class='row'>
+             <input type="text" placeholder="Y11">
+             <input type="text" placeholder="Y12">
+         </div>
+         <div class='row'>
+             <input type="text" placeholder="Y21">
+             <input type="text" placeholder="Y22">
+         </div>
+     </div> 
+     <div class='con' id='T'>
+        <div class='row'>
+             <input type="text" placeholder="A">
+             <input type="text" placeholder="B">
+         </div>
+         <div class='row'>
+             <input type="text" placeholder="C">
+             <input type="text" placeholder="D">
+         </div>
+     </div> 
+    </div>
+    <label for="matr">CONVERSION FROM</label>
+    <select id="matr">
+        <option value="0">Z matrix</option>
+        <option value="1">Y matrix</option>
+        <option value="2">h matrix</option>
+        <option value="3">T matrix</option>
+    </select>
+    <button class='btn' onclick='change()'>CONVERT</button>
+    <button class='btn' onclick='window.location.reload()'>CLEAR</button>
+    <div class='pics'>
+        <div class='sec'><img src="Z2.png" alt="Z parameters"></div>
+        <div class='sec'><img src="h.JPG" alt="h parameters"></div>
+        <div class='sec'><img src="Y.JPG" alt="Y parameters"></div>
+        <div class='sec'><img src="T.JPG" alt="T parameters"></div>
+    </div>
+    <h1>Click on any box and value will appear here</h1>
+    <h1 id='imvalue'></h1>
+    <div class='abs'><a href="index.html"><img src="home.png" alt="Home"></a></div>
+</body>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/7.5.1/math.min.js" type="text/javascript"></script>
+<script>
+    const imvalue=document.getElementById('imvalue');
+    console.log(imvalue);
+    let inputs=Array.from(document.querySelectorAll('.row input'));
+    inputs.forEach(el => {
+       el.addEventListener('click', function() {
+            if(el.value!="") {
+                imvalue.innerHTML=el.value;
+            }
+       });
+    });
+    function change() {
+        let arr=new Array();
+        inputs.forEach((el)=> {
+            if(el.value!="") {
+                let val=el.value;
+                val=val.replace("j", "");
+                let a=val.split("+");
+                console.log(a[0], a[1]);
+                let m = math.complex(a[0], a[1]);
+                console.log(m);
+                
+                arr.push(m);
+            }
+        });
+        var e = document.getElementById("matr");
+        var strUser = e.options[e.selectedIndex].value;
+        console.log(strUser);
+        switch(strUser) {
+            case '0':
+                Y=ZtoY(arr);
+                T=YtoT(Y);
+                h=Ttoh(T);
+                break;
+            case '1':
+                Z=YtoZ(arr);
+                T=YtoT(arr);
+                h=Ttoh(T);
+                break;
+            case '2':
+                Z=htoZ(arr);
+                console.log(Z);
+                Y=ZtoY(Z);
+                T=YtoT(Y);
+                break;
+            case '3':
+                h=Ttoh(arr);
+                Z=htoZ(h);
+                Y=ZtoY(Z);
+                break;
+        }
+        
+        console.log(arr);
+    }
+    function ZtoY(arr) {
+        arr=math.reshape(arr, [2,2]);
+        let out=math.inv(arr);
+        let newA= math.reshape(out, [1,4])[0];
+        console.log(out);
+        let inputs=Array.from(document.querySelectorAll('#Y .row input'));
+        console.log(inputs);
+        let key=0;
+        inputs.forEach((el)=> {
+            console.log(key);
+            console.log(newA[key]);
+            let realpart=(newA[key].re)?(newA[key].re+'+'):'';
+            if(newA[key].im<0) {
+                realpart=realpart.replace('+', '');
+            }
+            el.value=realpart+newA[key].im+'j';
+            key++;
+        });
+        return newA;
+    }
+    function YtoZ(arr) {
+        arr=math.reshape(arr, [2,2]);
+        let out=math.inv(arr);
+        let newA= math.reshape(out, [1,4])[0];
+        console.log(out);
+        let inputs=Array.from(document.querySelectorAll('#Z .row input'));
+        console.log(inputs);
+        let key=0;
+        inputs.forEach((el)=> {
+            console.log(key);
+            console.log(newA[key]);
+            let realpart=(newA[key].re)?(newA[key].re+'+'):'';
+            if(newA[key].im<0) {
+                realpart=realpart.replace('+', '');
+            }
+            el.value=realpart+newA[key].im+'j';
+            key++;
+        });
+        return newA;
+    }
+    function YtoT(arr) {
+        const parser=math.parser();
+        console.log(arr);
+        parser.evaluate('Y11='+arr[0].re+'+'+arr[0].im+'i');
+        parser.evaluate('Y12='+arr[1].re+'+'+arr[1].im+'i');
+        parser.evaluate('Y21='+arr[2].re+'+'+arr[2].im+'i');
+        parser.evaluate('Y22='+arr[3].re+'+'+arr[3].im+'i');
+        let A=new Array();
+        A[0]=parser.evaluate('-Y22/Y21');
+        A[1]=parser.evaluate('-1/Y21');
+        A[2]=parser.evaluate('(Y12*Y21-Y11*Y22)/Y21');
+        A[3]=parser.evaluate('-Y11/Y21');
+        // let B=math.divide(-1, Y21);
+        console.log(A);
+        let ret=new Array();
+        let inputs=Array.from(document.querySelectorAll('#T .row input'));
+        console.log(inputs);
+        let key=0;
+        inputs.forEach((el)=> {
+            console.log(key);
+            el.value=String(A[key]).replace("i", "j");
+            ret.push(math.complex(parser.evaluate('re('+A[key]+')'), parser.evaluate('im('+A[key]+')')));
+            key++;
+        });
+        return ret;
+    }
+    function Ttoh(arr) {
+        const parser=math.parser();
+        console.log(arr);
+        parser.evaluate('A='+arr[0].re+'+'+arr[0].im+'i');
+        parser.evaluate('B='+arr[1].re+'+'+arr[1].im+'i');
+        parser.evaluate('C='+arr[2].re+'+'+arr[2].im+'i');
+        parser.evaluate('D='+arr[3].re+'+'+arr[3].im+'i');
+        let A=new Array();
+        A[0]=parser.evaluate('B/D');
+        A[1]=parser.evaluate('(A*D-B*C)/D');
+        A[2]=parser.evaluate('-1/D');
+        A[3]=parser.evaluate('C/D');
+        // let B=math.divide(-1, Y21);
+        console.log(A);
+        let ret=new Array();
+        let inputs=Array.from(document.querySelectorAll('#h .row input'));
+        console.log(inputs);
+        let key=0;
+        inputs.forEach((el)=> {
+            console.log(key);
+            el.value=String(A[key]).replace("i", "j");
+            ret.push(math.complex(parser.evaluate('re('+A[key]+')'), parser.evaluate('im('+A[key]+')')));
+            key++;
+        });
+        return ret;
+    }
+    function htoZ(arr) {
+        console.log('here');
+        const parser=math.parser();
+        console.log(arr);
+        parser.evaluate('h11='+arr[0].re+'+'+arr[0].im+'i');
+        parser.evaluate('h12='+arr[1].re+'+'+arr[1].im+'i');
+        parser.evaluate('h21='+arr[2].re+'+'+arr[2].im+'i');
+        parser.evaluate('h22='+arr[3].re+'+'+arr[3].im+'i');
+        let A=new Array();
+        A[0]=parser.evaluate('(h11*h22-h12*h21)/h22');
+        A[1]=parser.evaluate('h12/h22');
+        A[2]=parser.evaluate('-h21/h22');
+        A[3]=parser.evaluate('1/h22');
+        // let B=math.divide(-1, Y21);
+        console.log(A);
+        let ret=new Array();
+        let inputs=Array.from(document.querySelectorAll('#Z .row input'));
+        console.log(inputs);
+        let key=0;
+        inputs.forEach((el)=> {
+            console.log(key);
+            el.value=String(A[key]).replace("i", "j");
+            ret.push(math.complex(parser.evaluate('re('+A[key]+')'), parser.evaluate('im('+A[key]+')')));
+            key++;
+        });
+        return ret;
+    }
+</script>

@@ -1,0 +1,110 @@
+<style>
+    body {
+        background-image: url("b.png");
+        color: white;
+   }
+ h1 {
+       padding-left: 10px;
+   }
+   .abs img {
+       border-radius: 50%;
+       height: 5vw;
+       width: 5vw;
+       margin: 10px;
+   }
+   .abs {
+       position: fixed;
+       right: 0;
+       bottom: 0;
+   }
+   .btn {
+        display: inline-block;
+        font-weight: 400;
+        text-align: center;
+        white-space: nowrap;
+        padding: 10px 20px;
+        background-color: #007bff;
+        border-color: #007bff;
+        color: white;
+        border-radius: 20px;
+        outline: none;
+        margin: 10px;
+    }
+    input {
+        padding: 5px;
+        background-color: unset;
+        color: white;
+        border-bottom: 5px solid skyblue;
+        outline: none;
+        font-size: 2rem;
+    }
+    ::placeholder {
+        color: white;
+        opacity: 1;
+    }
+    #imgDiv img {
+        height: 40vh;
+    }
+    
+</style>
+<body>
+    <div class='abs'><a href="index.html"><img src="home.png" alt="Home"></a></div>
+    <input id='R' type="text" placeholder="R(in &Omega;)">
+    <input id='L' type="text" placeholder="L(in Henry)">
+    <input id='C' type="text" placeholder="C(in Farad)">
+    <button class='btn' onclick='res()'>Submit</button>
+    <button class='btn' onclick='plot()'>Plot</button>
+    <h1 id='freq'>Resonant frequency-&omega;(in rad/sec): </h1>
+    <h1 id='Qfac'>Quality factor (Q): </h1>
+    <h1 id='band'>Bandwidth (in Hz): </h1>
+    <h1 id='low'>Lower cutoff frequency (in Hz): </h1>
+    <h1 id='high'>Upper cutoff frequency (in Hz): </h1>
+    <div id='imgDiv'>
+        <img src="rlc.png" alt="rlc circuit">
+    </div>
+</body>
+<script>
+    let R=new Array();
+    let L=new Array();
+    let C=new Array();
+    
+    let flag=0;
+    function res() {
+        const freq=document.getElementById('freq');
+        const Qfac=document.getElementById('Qfac');
+        const Bandwidth=document.getElementById('band');
+        const low=document.getElementById('low');
+        const high=document.getElementById('high');
+        Rval=document.getElementById('R').value;
+        Lval=document.getElementById('L').value;
+        Cval=document.getElementById('C').value;
+        let resFreq=1/Math.sqrt(Lval*Cval);
+        let hert=resFreq/(Math.PI*2);
+        let Qval=resFreq*Lval/Rval;
+        let bandwidth=hert/Qval;
+        let lowFreq=resFreq-(bandwidth/2);
+        let highFreq=resFreq+(bandwidth/2);
+        let valSpace=", ";
+        if(!flag) {
+            flag=1;
+            valSpace=" ";
+        }
+        freq.innerHTML+=valSpace+parseFloat(resFreq).toFixed(3);
+        Qfac.innerHTML+=valSpace+parseFloat(Qval).toFixed(3);
+        Bandwidth.innerHTML+=valSpace+parseFloat(bandwidth).toFixed(3);
+        low.innerHTML+=valSpace+parseFloat(lowFreq).toFixed(3);
+        high.innerHTML+=valSpace+parseFloat(highFreq).toFixed(3);
+        console.log(resFreq, Rval);
+        R.push(Rval);
+        L.push(Lval);
+        C.push(Cval);
+    }
+    function plot() {
+        if(R.length!=0 && L.length!=0 && C.length!=0) {
+            localStorage.setItem("Ra", JSON.stringify(R));
+            localStorage.setItem("La", JSON.stringify(L));
+            localStorage.setItem("Ca", JSON.stringify(C));
+            window.open('graph.html', "_blank");
+        } 
+    }
+</script>
